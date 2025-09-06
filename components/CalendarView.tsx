@@ -1,35 +1,29 @@
-import React from 'react';
-import { CalendarData, Trade } from '../types';
+import React, { useState } from 'react';
+import { CalendarData, CalendarDay } from '../types';
+import TradeDetailModal from './TradeDetailModal';
 
 interface CalendarViewProps {
     calendarData: CalendarData;
-    trades: Trade[];
+    detailedTrades: CalendarDay[];
 }
 
-const CalendarView: React.FC<CalendarViewProps> = ({ calendarData, trades }) => {
-    const { daily, weeklySummary, monthlySummary } = calendarData;
+const CalendarView: React.FC<CalendarViewProps> = ({ calendarData, detailedTrades }) => {
+    const { weeklySummary, monthlySummary } = calendarData;
+    const [selectedDay, setSelectedDay] = useState<CalendarDay | null>(null);
 
-    // --- Data Preparation ---
-    const dailyDataMap = new Map(daily.map(d => [new Date(d.date).toISOString().split('T')[0], d]));
-    const tradesByDate = trades.reduce((acc, trade) => {
-        const date = new Date(trade.date).toISOString().split('T')[0];
-        if (!acc[date]) {
-            acc[date] = [];
-        }
-        acc[date].push(trade);
-        return acc;
-    }, {} as Record<string, Trade[]>);
+    const detailedDataMap = new Map(detailedTrades.map(d => [d.date, d]));
+    const today = new Date();
+    const todayString = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())).toISOString().split('T')[0];
 
-    // --- Calendar Grid Logic for June 2024 ---
     const year = 2024;
-    const monthIndex = 5; // 0-indexed for June
+    const monthIndex = 5;
     const firstDayOfMonth = new Date(Date.UTC(year, monthIndex, 1));
     const daysInMonth = new Date(Date.UTC(year, monthIndex + 1, 0)).getUTCDate();
-    const firstDayOffset = firstDayOfMonth.getUTCDay(); // 0=Sun, 6=Sat
+    const firstDayOffset = firstDayOfMonth.getUTCDay();
 
     const totalCells = [];
     for (let i = 0; i < firstDayOffset; i++) {
-        totalCells.push(null); // Blanks for days before the 1st
+        totalCells.push(null);
     }
     for (let i = 1; i <= daysInMonth; i++) {
         totalCells.push(new Date(Date.UTC(year, monthIndex, i)));
@@ -43,32 +37,30 @@ const CalendarView: React.FC<CalendarViewProps> = ({ calendarData, trades }) => 
     const weekDayHeaders = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'WEEKLY TOTAL'];
 
     return (
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <>
+        <div className="bg-card p-6 rounded-2xl shadow-lg">
             <div className="flex justify-between items-start mb-4">
                 <div>
                     <h3 className="text-xl font-semibold">Trading Calendar</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">June 2024</p>
+                    <p className="text-sm text-text-muted">June 2024</p>
                 </div>
-                {/* Monthly Totals Card */}
-                <div className="text-right p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                    <div className={`text-xl font-bold ${monthlySummary.totalPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                <div className="text-right p-3 bg-background rounded-lg">
+                    <div className={`text-xl font-bold ${monthlySummary.totalPnL >= 0 ? 'text-success' : 'text-danger'}`}>
                         {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(monthlySummary.totalPnL)}
                     </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                    <div className="text-xs text-text-muted">
                         {monthlySummary.totalTrades} Trades | {monthlySummary.winRate}% Win Rate
                     </div>
                 </div>
             </div>
 
             <div className="grid grid-cols-8 gap-2">
-                {/* Headers */}
                 {weekDayHeaders.map(header => (
-                    <div key={header} className="text-center text-xs font-bold text-gray-500 dark:text-gray-400 pb-2">
+                    <div key={header} className="text-center text-xs font-bold text-text-muted pb-2">
                         {header}
                     </div>
                 ))}
 
-                {/* Calendar Body */}
                 {weeks.map((week, weekIndex) => (
                     <React.Fragment key={`week-${weekIndex}`}>
                         {Array.from({ length: 7 }).map((_, dayIndex) => {
@@ -77,70 +69,69 @@ const CalendarView: React.FC<CalendarViewProps> = ({ calendarData, trades }) => 
                                 return <div key={`blank-${weekIndex}-${dayIndex}`} className="rounded-lg"></div>;
                             }
                             const dateString = day.toISOString().split('T')[0];
-                            const dayData = dailyDataMap.get(dateString);
-                            const dayTrades = tradesByDate[dateString] || [];
+                            const dayData = detailedDataMap.get(dateString);
+                            const isToday = dateString === todayString;
 
-                            let dayCellClasses = 'relative group p-2 border border-gray-200 dark:border-gray-700 rounded-lg h-24 flex flex-col justify-between transition-all duration-200 hover:shadow-lg hover:border-blue-500 dark:hover:border-blue-500 hover:z-10 hover:scale-105';
-                            let pnlClasses = 'font-bold';
+                            let dayCellClasses = 'relative p-2 rounded-lg h-36 flex flex-col justify-between transition-shadow duration-200';
+                            
+                            if (isToday) {
+                                dayCellClasses += ' border-2 border-primary';
+                            } else {
+                                dayCellClasses += ' border border-card-alt';
+                            }
                             
                             if (dayData) {
-                                if (dayData.pnl > 0) dayCellClasses += ' bg-green-50 dark:bg-green-900/40';
-                                else if (dayData.pnl < 0) dayCellClasses += ' bg-red-50 dark:bg-red-900/40';
-                                else dayCellClasses += ' bg-gray-100 dark:bg-gray-700/50';
-
-                                if (dayData.pnl > 0) pnlClasses += ' text-green-600 dark:text-green-400';
-                                else if (dayData.pnl < 0) pnlClasses += ' text-red-600 dark:text-red-400';
+                                dayCellClasses += ' cursor-pointer hover:shadow-lg';
+                                if (!isToday) {
+                                    dayCellClasses += ' hover:border-primary';
+                                }
+                                if (dayData.dailyTotalPnL > 0) dayCellClasses += ' bg-success/10';
+                                else if (dayData.dailyTotalPnL < 0) dayCellClasses += ' bg-danger/10';
+                                else dayCellClasses += ' bg-card-alt/50';
                             } else {
-                                dayCellClasses += ' bg-gray-50 dark:bg-gray-700/30';
+                                dayCellClasses += ' bg-card-alt/30';
                             }
 
                             return (
-                                <div key={dateString} className={dayCellClasses}>
-                                    <div className="text-right font-semibold text-xs text-gray-600 dark:text-gray-300">{day.getUTCDate()}</div>
+                                <div key={dateString} className={dayCellClasses} onClick={() => dayData && setSelectedDay(dayData)}>
+                                    <div className="text-left font-semibold text-xs text-text-main">{day.getUTCDate()}</div>
+                                    
                                     {dayData && (
-                                        <div>
-                                            <div className={`text-sm ${pnlClasses}`}>
-                                                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(dayData.pnl)}
-                                            </div>
-                                            <div className="text-xs text-gray-500 dark:text-gray-400">
-                                                {dayData.trades} trade{dayData.trades !== 1 ? 's' : ''}
-                                                <span className="ml-1 text-gray-400 dark:text-gray-500">({dayData.winRate.toFixed(0)}%)</span>
-                                            </div>
+                                        <div className="flex-grow overflow-y-hidden text-[11px] my-1">
+                                            {dayData.trades.slice(0, 3).map(trade => (
+                                                <div key={trade.id} className="flex justify-between items-center rounded p-0.5 bg-background/30 mb-0.5">
+                                                    <span className="font-semibold truncate pr-1">{trade.instrument}</span>
+                                                    <div className={`flex items-center flex-shrink-0 font-bold ${trade.pnl >= 0 ? 'text-success' : 'text-danger'}`}>
+                                                        {trade.pnl >= 0 ? '+' : ''}{trade.pnl}
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
                                     )}
-                                    {/* Tooltip */}
-                                    {dayTrades.length > 0 && (
-                                        <div className="absolute top-full left-0 mt-2 w-60 bg-gray-800 text-white p-3 rounded-lg shadow-xl z-20 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity pointer-events-none">
-                                            <h4 className="font-bold border-b border-gray-600 pb-1 mb-2 text-sm">{dateString}</h4>
-                                            <ul>
-                                                {dayTrades.map(trade => (
-                                                    <li key={trade.id} className="text-xs mb-1 flex justify-between">
-                                                        <span>{trade.instrument}</span>
-                                                        <span className={trade.pnl >= 0 ? 'text-green-400' : 'text-red-400'}>
-                                                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(trade.pnl)}
-                                                        </span>
-                                                    </li>
-                                                ))}
-                                            </ul>
+                                    
+                                    {dayData && (
+                                        <div className={`text-center text-sm font-bold ${dayData.dailyTotalPnL >= 0 ? 'text-success' : 'text-danger'}`}>
+                                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(dayData.dailyTotalPnL)}
                                         </div>
                                     )}
                                 </div>
                             );
                         })}
 
-                        {/* Weekly Summary Cell */}
-                        {weeklySummary[weekIndex] ? (
-                            <div className="bg-gray-100 dark:bg-gray-900/50 rounded-lg flex flex-col items-center justify-center p-2 text-center">
-                                <div className={`text-lg font-bold ${weeklySummary[weekIndex].totalPnL >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                        {weeklySummary[weekIndex] && weeklySummary[weekIndex].trades > 0 ? (
+                            <div className="bg-card-alt/50 rounded-lg flex flex-col items-center justify-center p-2 text-center">
+                                <div className={`text-lg font-bold ${weeklySummary[weekIndex].totalPnL >= 0 ? 'text-success' : 'text-danger'}`}>
                                     {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(weeklySummary[weekIndex].totalPnL)}
                                 </div>
-                                <div className="text-xs text-gray-500 dark:text-gray-400">{weeklySummary[weekIndex].trades} trades</div>
+                                <div className="text-xs text-text-muted">{weeklySummary[weekIndex].trades} trades</div>
                             </div>
                         ) : <div className="rounded-lg"></div>}
                     </React.Fragment>
                 ))}
             </div>
         </div>
+        <TradeDetailModal day={selectedDay} onClose={() => setSelectedDay(null)} />
+        </>
     );
 };
 

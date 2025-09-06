@@ -12,6 +12,10 @@ import {
   ArrowDown,
   DollarSign,
   Percent,
+  Camera,
+  Pencil,
+  Trash2,
+  X,
 } from 'lucide-react';
 
 export const DashboardIcon: React.FC = () => <LayoutDashboard size={20} />;
@@ -24,7 +28,11 @@ export const NewsIcon: React.FC = () => <Newspaper size={20} />;
 export const SettingsIcon: React.FC = () => <Settings size={20} />;
 export const PlusIcon: React.FC = () => <Plus size={16} />;
 
-export const StatUpIcon: React.FC = () => <ArrowUp size={20} className="text-green-500" />;
-export const StatDownIcon: React.FC = () => <ArrowDown size={20} className="text-red-500" />;
-export const PnlIcon: React.FC = () => <DollarSign size={20} className="text-blue-500" />;
-export const WinRateIcon: React.FC = () => <Percent size={20} className="text-purple-500" />;
+export const StatUpIcon: React.FC = () => <ArrowUp size={20} className="text-success" />;
+export const StatDownIcon: React.FC = () => <ArrowDown size={20} className="text-danger" />;
+export const PnlIcon: React.FC = () => <DollarSign size={20} />;
+export const WinRateIcon: React.FC = () => <Percent size={20} />;
+export const CameraIcon: React.FC<{className?: string}> = ({className}) => <Camera size={14} className={className} />;
+export const EditIcon: React.FC = () => <Pencil size={16} />;
+export const DeleteIcon: React.FC = () => <Trash2 size={16} />;
+export const XIcon: React.FC<{size?: number}> = ({size = 16}) => <X size={size} />;

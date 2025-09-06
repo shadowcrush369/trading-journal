@@ -24,28 +24,28 @@ const AIInsightCard: React.FC = () => {
     };
 
     return (
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div className="bg-card p-6 rounded-2xl shadow-lg">
             <div className="flex items-center mb-4">
-                <BrainCircuit className="text-purple-500 mr-3" size={24} />
+                <BrainCircuit className="text-primary mr-3" size={24} />
                 <h3 className="text-xl font-semibold">AI-Powered Insight</h3>
             </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            <p className="text-sm text-text-muted mb-4">
                 Get an AI-generated analysis of your recent trading performance.
             </p>
             
             <button
                 onClick={handleGetInsight}
                 disabled={loading}
-                className="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600 disabled:bg-blue-400 dark:disabled:bg-blue-800 transition-colors"
+                className="w-full bg-primary text-white font-bold py-2 px-4 rounded-lg hover:bg-primary/90 disabled:bg-primary/50 transition-colors"
             >
                 {loading ? 'Generating...' : 'Get Insight'}
             </button>
 
-            {error && <p className="text-red-500 mt-4 text-sm">{error}</p>}
+            {error && <p className="text-danger mt-4 text-sm">{error}</p>}
             
             {insight && (
-                <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded">
-                    <p className="text-sm whitespace-pre-wrap font-mono">{insight}</p>
+                <div className="mt-4 p-4 bg-background rounded">
+                    <p className="text-sm whitespace-pre-wrap font-mono text-text-main">{insight}</p>
                 </div>
             )}
         </div>

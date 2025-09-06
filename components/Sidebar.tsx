@@ -7,47 +7,83 @@ interface SidebarProps {
   setCurrentView: (view: View) => void;
 }
 
-const navItems: { view: View; label: string; icon: React.ReactNode }[] = [
-  { view: 'dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
-  { view: 'trades', label: 'Trades Journal', icon: <TradesIcon /> },
-  { view: 'portfolio', label: 'Portfolio', icon: <PortfolioIcon /> },
-  { view: 'reports', label: 'Reports', icon: <ReportsIcon /> },
-  { view: 'insights', label: 'AI Insights', icon: <InsightsIcon /> },
-  { view: 'psychology', label: 'Psychology', icon: <PsychologyIcon /> },
-  { view: 'news', label: 'News', icon: <NewsIcon /> },
+type NavItem = { view: View; label: string; icon: React.ReactNode };
+type NavSection = { title: string; items: NavItem[] };
+
+const navSections: NavSection[] = [
+  {
+    title: 'MENU',
+    items: [
+      { view: 'dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
+      { view: 'trades', label: 'Trades Journal', icon: <TradesIcon /> },
+    ],
+  },
+  {
+    title: 'ANALYSIS',
+    items: [
+      { view: 'portfolio', label: 'Portfolio', icon: <PortfolioIcon /> },
+      { view: 'reports', label: 'Reports', icon: <ReportsIcon /> },
+      { view: 'insights', label: 'AI Insights', icon: <InsightsIcon /> },
+    ],
+  },
+  {
+    title: 'OTHER',
+    items: [
+      { view: 'psychology', label: 'Psychology', icon: <PsychologyIcon /> },
+      { view: 'news', label: 'News', icon: <NewsIcon /> },
+    ],
+  },
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView }) => {
   return (
-    <aside className="w-64 bg-white dark:bg-gray-800 shadow-md flex flex-col">
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-2xl font-bold text-center">Trade<span className="text-blue-500">Journal</span></h2>
+    <aside className="w-64 bg-background flex flex-col p-4 shadow-2xl">
+      <div className="py-4 mb-4">
+        <h2 className="text-2xl font-bold text-center text-text-main">
+          Trade<span className="text-primary">Journal</span>
+        </h2>
       </div>
-      <nav className="flex-1 mt-4">
-        <ul>
-          {navItems.map((item) => (
-            <li key={item.view} className="px-4 py-2">
-              <a
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setCurrentView(item.view);
-                }}
-                className={`flex items-center p-2 rounded-lg transition-colors ${
-                  currentView === item.view
-                    ? 'bg-blue-500 text-white'
-                    : 'hover:bg-gray-200 dark:hover:bg-gray-700'
-                }`}
-              >
-                <span className="mr-3">{item.icon}</span>
-                {item.label}
-              </a>
-            </li>
-          ))}
-        </ul>
+      <nav className="flex-1">
+        {navSections.map((section) => (
+          <div key={section.title} className="mb-6">
+            <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider px-3 mb-2">
+              {section.title}
+            </h3>
+            <ul>
+              {section.items.map((item) => (
+                <li key={item.view} className="my-1">
+                  <a
+                    href="#"
+                    onClick={(e) => { e.preventDefault(); setCurrentView(item.view); }}
+                    className={`flex items-center p-3 rounded-lg transition-all duration-200 relative ${
+                      currentView === item.view
+                        ? 'bg-primary/10 text-primary-light font-semibold'
+                        : 'text-text-muted hover:bg-card hover:text-text-main'
+                    }`}
+                  >
+                    {currentView === item.view && (
+                      <span className="absolute left-0 top-2 bottom-2 w-1 bg-primary rounded-r-full"></span>
+                    )}
+                    <span className="mr-3">{item.icon}</span>
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </nav>
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-        <a href="#" onClick={(e) => { e.preventDefault(); setCurrentView('settings'); }} className="flex items-center p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">
+      <div className="mt-auto">
+        <a href="#" onClick={(e) => { e.preventDefault(); setCurrentView('settings'); }}
+           className={`flex items-center p-3 rounded-lg transition-all duration-200 relative ${
+             currentView === 'settings'
+               ? 'bg-primary/10 text-primary-light font-semibold'
+               : 'text-text-muted hover:bg-card hover:text-text-main'
+           }`}
+        >
+          {currentView === 'settings' && (
+              <span className="absolute left-0 top-2 bottom-2 w-1 bg-primary rounded-r-full"></span>
+          )}
           <SettingsIcon />
           <span className="ml-3">Settings</span>
         </a>
