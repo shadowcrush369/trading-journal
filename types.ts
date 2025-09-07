@@ -71,6 +71,8 @@ export interface Trade {
     orderType: string;
     mistake: string;
     psychology: string;
+    confidenceLevel: number;
+    stressLevel: number;
     notes: string;
     tags: string[];
     profitOrLoss: string;
@@ -93,4 +95,23 @@ export interface CalendarDay {
     date: string;
     dailyTotalPnL: number;
     trades: ScreenshotTrade[];
+}
+
+export interface PsychologyEntry {
+  id: number;
+  date: string;
+  emotions: string;
+  mindset: string;
+  confidence: number; // 1-5
+  stress: number; // 1-5
+}
+
+export interface NewsArticle {
+  id: string;
+  source: string;
+  timestamp: string;
+  headline: string;
+  summary: string;
+  category: string;
+  symbols: string[];
 }

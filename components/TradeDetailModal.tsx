@@ -25,7 +25,7 @@ const Lightbox: React.FC<{ images: string[], selectedIndex: number, onClose: () 
     const prevImage = () => setCurrentIndex(prev => (prev - 1 + images.length) % images.length);
 
     return (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50" onClick={onClose}>
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
             <button className="absolute top-4 right-4 text-white hover:text-gray-300" onClick={onClose}><X size={32} /></button>
             <div className="relative w-full max-w-4xl h-full max-h-[90vh]" onClick={e => e.stopPropagation()}>
                 <img src={images[currentIndex]} alt={`Screenshot ${currentIndex + 1}`} className="w-full h-full object-contain" />
@@ -64,12 +64,12 @@ const TradeDetailModal: React.FC<TradeDetailModalProps> = ({ day, onClose }) => 
     return (
         <>
             <div className="fixed inset-0 bg-black/50 z-40" onClick={onClose}></div>
-            <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-card rounded-lg shadow-xl z-50">
-                <div className="p-6 border-b border-card-alt flex justify-between items-center">
-                    <h2 className="text-2xl font-bold">Trades for {new Date(day.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</h2>
+            <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] max-w-2xl bg-card rounded-lg shadow-xl z-50">
+                <div className="p-4 md:p-6 border-b border-card-alt flex justify-between items-center">
+                    <h2 className="text-xl md:text-2xl font-bold">Trades for {new Date(day.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', timeZone: 'UTC' })}</h2>
                     <button onClick={onClose} className="text-text-muted hover:text-text-main"><X /></button>
                 </div>
-                <div className="p-6 max-h-[70vh] overflow-y-auto space-y-6">
+                <div className="p-4 md:p-6 max-h-[70vh] overflow-y-auto space-y-6">
                     {day.trades.map(trade => (
                         <div key={trade.id} className="bg-card-alt/50 p-4 rounded-lg">
                             <div className="flex justify-between items-start">

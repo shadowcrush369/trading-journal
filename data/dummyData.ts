@@ -1,4 +1,4 @@
-import { UserProfile, CalendarData, Trade, CalendarDay } from '../types';
+import { UserProfile, CalendarData, Trade, CalendarDay, NewsArticle } from '../types';
 
 export const userProfileData: UserProfile = {
   name: "Ajay",
@@ -53,21 +53,21 @@ export const tradesData: Trade[] = [
         status: 'Closed by T/P', position: 1, netPnL: 1045, slRisk: 100, maxRR: '1:10.5', model: 'ORB', 
         newsImpact: 'Low', session: 'NY AM Session', timeframe: '5m', narrative: 'Bullish', bias: 'Bullish', 
         tradeType: 'Day Trade', pdArray: 'Premium', orderType: 'Market Order', mistake: 'None', 
-        psychology: 'Confident', notes: 'Clean trade.', tags: ['breakout'], profitOrLoss: 'Profit', risk: 1, images: [] 
+        psychology: 'Confident', confidenceLevel: 5, stressLevel: 1, notes: 'Clean trade.', tags: ['breakout'], profitOrLoss: 'Profit', risk: 1, images: [] 
     },
     { 
         id: 2, date: '2024-06-13', instrument: 'EUR/USD', symbol: 'EURUSD', direction: 'Short', entry: 1.0750, exit: 1.0780, pnl: -638, 
         status: 'Closed by S/L', position: 2, netPnL: -640, slRisk: 200, maxRR: '1:3', model: 'News Fade', 
         newsImpact: 'High', session: 'London', timeframe: '15m', narrative: 'Bearish', bias: 'Bearish', 
         tradeType: 'Scalping', pdArray: 'Discount', orderType: 'Limit Order', mistake: 'Entered too early', 
-        psychology: 'Anxious', notes: 'Should have waited for confirmation.', tags: ['reversal', 'news'], profitOrLoss: 'Loss', risk: 2, images: []
+        psychology: 'Anxious', confidenceLevel: 2, stressLevel: 4, notes: 'Should have waited for confirmation.', tags: ['reversal', 'news'], profitOrLoss: 'Loss', risk: 2, images: []
     },
     { 
         id: 3, date: '2024-06-20', instrument: 'BTC/USD', symbol: 'BTCUSD', direction: 'Long', entry: 65000, exit: 66180, pnl: 1180,
         status: 'Closed Manually', position: 0.1, netPnL: 1178, slRisk: 300, maxRR: '1:4', model: 'Support Hold', 
         newsImpact: 'None', session: 'Asia', timeframe: '1h', narrative: 'Bullish', bias: 'Bullish', 
         tradeType: 'Swing Trade', pdArray: 'Discount', orderType: 'Market Order', mistake: 'Took profit a bit early', 
-        psychology: 'Patient', notes: 'Good R:R.', tags: ['momentum'], profitOrLoss: 'Profit', risk: 1.5, images: []
+        psychology: 'Patient', confidenceLevel: 4, stressLevel: 2, notes: 'Good R:R.', tags: ['momentum'], profitOrLoss: 'Profit', risk: 1.5, images: []
     },
 ];
 
@@ -101,4 +101,43 @@ export const calendarTradeData: CalendarDay[] = [
              { id: 6, instrument: 'OIL', direction: 'Long', entryTime: '08:30', exitTime: '11:00', pnl: -287, screenshots: [], notes: 'Reversal didn\'t hold.' },
         ],
     },
+];
+
+export const newsData: NewsArticle[] = [
+  {
+    id: '1',
+    source: 'Financial Times',
+    timestamp: '2024-07-29T14:30:00Z',
+    headline: 'Fed Holds Interest Rates Steady, Cites Moderate Economic Growth',
+    summary: 'The Federal Reserve concluded its two-day meeting, leaving interest rates unchanged as expected. The committee pointed to "moderate" economic growth and a strong labor market.',
+    category: 'Macroeconomics',
+    symbols: ['USD', 'SPX500', 'NQ100'],
+  },
+  {
+    id: '2',
+    source: 'Reuters',
+    timestamp: '2024-07-29T13:05:00Z',
+    headline: 'EUR/USD Slips as ECB President Hints at Dovish Stance',
+    summary: 'The euro weakened against the dollar after the European Central Bank president suggested that monetary policy could be loosened further to combat sluggish inflation.',
+    category: 'Forex',
+    symbols: ['EURUSD', 'EUR'],
+  },
+  {
+    id: '3',
+    source: 'Bloomberg',
+    timestamp: '2024-07-29T11:55:00Z',
+    headline: 'Bitcoin Rallies Above $68,000 on Renewed Institutional Interest',
+    summary: 'Bitcoin (BTC) saw a significant price increase, breaking the $68,000 resistance level amid reports of a major investment firm planning to launch a new crypto fund.',
+    category: 'Cryptocurrency',
+    symbols: ['BTCUSD', 'BTC'],
+  },
+    {
+    id: '4',
+    source: 'Wall Street Journal',
+    timestamp: '2024-07-29T10:15:00Z',
+    headline: 'Oil Prices Climb on Supply Disruption Fears in the Middle East',
+    summary: 'Crude oil futures rose sharply following news of potential supply chain disruptions due to heightened geopolitical tensions in a key oil-producing region.',
+    category: 'Commodities',
+    symbols: ['OIL', 'WTI'],
+  },
 ];

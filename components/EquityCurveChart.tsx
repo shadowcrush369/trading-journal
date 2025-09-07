@@ -1,14 +1,18 @@
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface EquityCurveChartProps {
   data: { day: number; value: number }[];
 }
 
 const EquityCurveChart: React.FC<EquityCurveChartProps> = ({ data }) => {
-  const strokeColor = '#9ca3af'; 
-  const gridColor = '#1F2937';
-  const textColor = '#e5e7eb';
+  const { theme } = useTheme();
+
+  const strokeColor = theme === 'dark' ? '#9ca3af' : '#4B5563'; 
+  const gridColor = theme === 'dark' ? '#1F2937' : '#E5E7EB';
+  const textColor = theme === 'dark' ? '#e5e7eb' : '#111827';
+  const tooltipBgColor = theme === 'dark' ? '#182032' : '#FFFFFF';
 
   return (
     <ResponsiveContainer width="100%" height={300}>
@@ -24,7 +28,7 @@ const EquityCurveChart: React.FC<EquityCurveChartProps> = ({ data }) => {
         <YAxis stroke={strokeColor} tick={{ fill: textColor, fontSize: 12 }} tickFormatter={(value) => `$${value}`} />
         <Tooltip
           contentStyle={{
-            backgroundColor: '#182032',
+            backgroundColor: tooltipBgColor,
             borderColor: gridColor,
             borderRadius: '0.5rem',
             color: textColor,

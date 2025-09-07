@@ -6,21 +6,78 @@
     <title>AI Trading Journal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
+      // Set theme class on <html> to prevent Flash of Unstyled Content (FOUC)
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+    </script>
+    <style>
+      :root {
+        /* Light Mode Colors */
+        --color-background: #FAEBD7;
+        --color-card: #FFFFFF;
+        --color-card-alt: #E5E7EB;
+        --color-text-main: #111827;
+        --color-text-muted: #4B5563;
+        
+        /* Shared Colors */
+        --color-primary: #a855f7;
+        --color-primary-light: #c084fc;
+        --color-secondary: #22d3ee;
+        --color-accent: #d946ef;
+        --color-danger: #ef4444;
+        --color-success: #22c55e;
+      }
+      .dark {
+        /* Dark Mode Colors */
+        --color-background: #000000;
+        --color-card: #182032;
+        --color-card-alt: #1F2937;
+        --color-text-main: #e5e7eb;
+        --color-text-muted: #9ca3af;
+      }
+
+      @media (max-width: 767px) {
+        /* Responsive tables */
+        .responsive-table td[data-label]::before {
+            content: attr(data-label);
+            font-weight: 600;
+            margin-right: 0.5rem;
+            display: inline-block;
+            min-width: 80px;
+            color: var(--color-text-muted);
+        }
+        .responsive-table td {
+           display: flex;
+           justify-content: space-between;
+           align-items: center;
+           padding: 0.5rem 0;
+           border-bottom: 1px solid var(--color-card);
+        }
+        .responsive-table tr:last-child td:last-child {
+            border-bottom: none;
+        }
+      }
+    </style>
+    <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           colors: {
-            background: '#101827',
-            card: '#182032',
-            'card-alt': '#1F2937',
-            primary: '#a855f7',
-            'primary-light': '#c084fc',
-            secondary: '#22d3ee',
-            accent: '#d946ef',
-            'text-main': '#e5e7eb',
-            'text-muted': '#9ca3af',
-            danger: '#ef4444',
-            success: '#22c55e',
+            background: 'var(--color-background)',
+            card: 'var(--color-card)',
+            'card-alt': 'var(--color-card-alt)',
+            primary: 'var(--color-primary)',
+            'primary-light': 'var(--color-primary-light)',
+            secondary: 'var(--color-secondary)',
+            accent: 'var(--color-accent)',
+            'text-main': 'var(--color-text-main)',
+            'text-muted': 'var(--color-text-muted)',
+            danger: 'var(--color-danger)',
+            success: 'var(--color-success)',
           },
           fontFamily: {
             sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
@@ -30,7 +87,7 @@
     }
   </script>
 </head>
-<body class="bg-background">
+<body class="bg-background text-text-main transition-colors duration-300">
     <div id="root"></div>
     <script type="importmap">
     {

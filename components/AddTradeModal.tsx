@@ -39,6 +39,8 @@ const initialTradeState: Trade = {
     orderType: 'Market Order',
     mistake: 'None',
     psychology: 'Focused',
+    confidenceLevel: 3,
+    stressLevel: 3,
     notes: '',
     tags: [],
     profitOrLoss: 'Breakeven',
@@ -64,9 +66,18 @@ const AddTradeModal: React.FC<AddTradeModalProps> = ({ isOpen, onClose, onSave, 
     if (!isOpen) return null;
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        const { name, value, type } = e.target;
-        const isNumber = type === 'number' && name !== 'date';
-        setFormData(prev => ({ ...prev, [name]: isNumber ? parseFloat(value) || 0 : value }));
+        const { name, value } = e.target;
+        
+        const numericFields = [
+            'entry', 'exit', 'position', 'pnl', 'netPnL', 'risk', 'slRisk', 
+            'confidenceLevel', 'stressLevel'
+        ];
+        
+        if (numericFields.includes(name)) {
+            setFormData(prev => ({ ...prev, [name]: parseFloat(value) || 0 }));
+        } else {
+            setFormData(prev => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleTagChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -97,7 +108,7 @@ const AddTradeModal: React.FC<AddTradeModalProps> = ({ isOpen, onClose, onSave, 
 
     return (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-            <div className="bg-card rounded-lg shadow-xl w-full max-w-5xl max-h-[90vh] flex flex-col">
+            <div className="bg-card rounded-lg shadow-xl w-[95vw] max-w-5xl max-h-[90vh] flex flex-col">
                 <div className="flex justify-between items-center p-4 border-b border-card-alt">
                     <h2 className="text-xl font-bold">{tradeToEdit ? 'Edit Trade' : 'Add New Trade'}</h2>
                     <button onClick={onClose} className="p-1 rounded-full hover:bg-card-alt"><XIcon size={20} /></button>
@@ -139,6 +150,26 @@ const AddTradeModal: React.FC<AddTradeModalProps> = ({ isOpen, onClose, onSave, 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                         <div><Label>Mistake Analysis</Label><Select name="mistake" value={formData.mistake} onChange={handleChange}>{MISTAKES.map(m => <option key={m}>{m}</option>)}</Select></div>
                         <div><Label>Psychology</Label><Select name="psychology" value={formData.psychology} onChange={handleChange}>{PSYCHOLOGY_OPTIONS.map(p => <option key={p}>{p}</option>)}</Select></div>
+                        <div>
+                            <Label>Confidence Level (1-5)</Label>
+                            <Select name="confidenceLevel" value={formData.confidenceLevel} onChange={handleChange}>
+                                <option value={1}>1 - Very Low</option>
+                                <option value={2}>2 - Low</option>
+                                <option value={3}>3 - Neutral</option>
+                                <option value={4}>4 - High</option>
+                                <option value={5}>5 - Very High</option>
+                            </Select>
+                        </div>
+                        <div>
+                            <Label>Stress Level (1-5)</Label>
+                            <Select name="stressLevel" value={formData.stressLevel} onChange={handleChange}>
+                                <option value={1}>1 - Calm</option>
+                                <option value={2}>2 - Slight Pressure</option>
+                                <option value={3}>3 - Stressed</option>
+                                <option value={4}>4 - High Stress</option>
+                                <option value={5}>5 - Extremely Stressed</option>
+                            </Select>
+                        </div>
                         <div className="md:col-span-2"><Label>Narrative/Notes</Label><Textarea name="notes" value={formData.notes} onChange={handleChange} placeholder="Detailed notes about the trade rationale, execution, and outcome." /></div>
                         <div className="md:col-span-2"><Label>Tags (comma-separated)</Label><Input name="tags" value={Array.isArray(formData.tags) ? formData.tags.join(', ') : ''} onChange={handleTagChange} placeholder="e.g. breakout, news-fade, high-volume" /></div>
                     </div>

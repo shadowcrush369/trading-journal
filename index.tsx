@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { AuthProvider } from './contexts/AuthContext';
 
 document.addEventListener('DOMContentLoaded', () => {
   const rootElement = document.getElementById('root');
@@ -11,7 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <React.StrictMode>
-      <App />
+      <AuthProvider>
+        <ThemeProvider>
+          <App />
+        </ThemeProvider>
+      </AuthProvider>
     </React.StrictMode>
   );
 });
